@@ -10,6 +10,27 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(SOURCES
         src/main.cpp
         src/parsing/csvReader.cpp
+        src/clases/Product.cpp
+        src/clases/Product.h
+        src/tads/Lista.cpp
+        src/tads/Lista.h
+        src/tads/NodoLista.cpp
+        src/tads/NodoLista.h
+        src/tads/ArbolAVL.cpp
+        src/tads/ArbolAVL.h
+        src/tads/NodoAVL.cpp
+        src/tads/NodoAVL.h
+        src/parsing/loader.cpp
+        src/helperMethods/valorOrdenAZ.cpp
+        src/globals.cpp
+        src/globals.h
+        src/helperMethods/valorOrdenarAZ.h
+        src/parsing/csvReader.h
+        src/parsing/loader.h
+        src/export/generarDot.cpp
+        src/export/generarDot.h
+        src/export/listarInorderAvl.cpp
+        src/export/listarInorderAvl.h
 )
 
 add_executable(Arboles ${SOURCES})
