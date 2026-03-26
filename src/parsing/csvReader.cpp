@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 #include "../clases/Product.h"
 #include "./csvReader.h"
 
@@ -14,12 +15,12 @@
 std::string trim (std::string& strTrim)
 {
     std::string enBlanco = " \n\r\t\f\v";
-    int posPrimerChar = strTrim.find_first_not_of(enBlanco);
+    size_t posPrimerChar = strTrim.find_first_not_of(enBlanco);
     if (std::string::npos == posPrimerChar)
     {
         return "";
     }
-    int posLastChar = strTrim.find_last_not_of(enBlanco);
+    size_t posLastChar = strTrim.find_last_not_of(enBlanco);
     return strTrim.substr(posPrimerChar, (posLastChar - posPrimerChar + 1));
 }
 
@@ -31,7 +32,7 @@ std::vector<std::string> splitCSVLine(const std::string& line)
     std::string field;
     bool entreComillas = false;
 
-    for (int i = 0; i < line.size(); ++i)
+    for (size_t i = 0; i < line.size(); ++i)
     {
         char ch = line[i];
         if (ch == '"')
@@ -61,7 +62,7 @@ std::vector<std::string> splitCSVLine(const std::string& line)
 
 std::vector<Product> parseCSV(std::string& content)
 {
-    std::cout << "Parseando CSV...";
+    std::cout << "Parseando CSV... \n";
 
     std::vector<Product> products;
     std::istringstream stream(content);

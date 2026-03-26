@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "globals.h"
+#include "export/generarDot.h"
 #include "parsing/csvReader.h"
 #include "parsing/loader.h"
 
@@ -179,10 +180,10 @@ void menuVisualizar()
 
 		switch (opcion) {
 		case 0:
-			//MedicionRendimiento();
+			generarDot(arbolAVL->getRaiz());
 			break;
 		case 1:
-			//listarInorderAvl();
+			arbolAVL->listarInorder(arbolAVL->getRaiz());
 			break;
 		case 2:
 			std::cout << "Regresando al menu principal..." << std::endl;

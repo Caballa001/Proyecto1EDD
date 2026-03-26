@@ -33,7 +33,13 @@ set(SOURCES
         src/export/listarInorderAvl.h
 )
 
+# Graphviz
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GRAPHVIZ REQUIRED libgvc libcgraph)
+
 add_executable(Arboles ${SOURCES})
+target_include_directories(Arboles PRIVATE ${GRAPHVIZ_INCLUDE_DIRS})
+target_link_libraries(Arboles PRIVATE ${GRAPHVIZ_LIBRARIES})
 
 # Directorios a incluir
 target_include_directories(Arboles PRIVATE

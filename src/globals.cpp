@@ -16,5 +16,7 @@ void limpiarDatos()
     arbolAVL = new ArbolAVL(nullptr);
     listaDesordenada = new Lista(nullptr);
     listaOrdenada = new Lista(nullptr);
+
+    std::cout << "Estructuras limpiadas" << std::endl;
 }
 

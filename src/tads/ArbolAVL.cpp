@@ -57,7 +57,7 @@ void ArbolAVL::agregarNodo(NodoAVL* nodo, NodoAVL* rz)
     else
     {
         std::cout << "Valor duplicado, se descarta el producto" << std::endl;
-        //TODO: agregar al log
+        //TODO: agregar al log, flag de insercion fallida (para hacer rollback)
         delete nodo;
     }
 }
@@ -66,3 +66,14 @@ void ArbolAVL::balancear(NodoAVL* rz)
 {
     //todo implementar metodos de balanceo
 }
+
+void ArbolAVL::listarInorder(Nodo* rz)
+{
+    if (rz == nullptr) return;
+
+    listarInorder(rz->getIzquierdo());
+    std::cout << rz->getValor()->barcode << " - " << rz->getValor()->name << std::endl;
+    listarInorder(rz->getDerecho());
+}
+
+

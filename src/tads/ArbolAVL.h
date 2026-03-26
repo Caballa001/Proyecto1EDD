@@ -8,6 +8,8 @@
 #include "../clases/Product.h"
 #include "../helperMethods/valorOrdenarAZ.h"
 #include <iostream>
+#include <string>
+#include <vector>
 
 class ArbolAVL
 {
@@ -24,6 +26,8 @@ public:
 
     void agregarNodo(Nodo* nodo, Nodo* rz);
     void balancear(Nodo* rz);
+
+    void listarInorder(Nodo* rz);
 };
 
 
