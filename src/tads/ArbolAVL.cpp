@@ -63,24 +63,18 @@ void ArbolAVL::agregarNodo(NodoAVL* nodo, NodoAVL* rz)
     }
 }
 
-int ArbolAVL::alturaSegura(Nodo* n)
-{
-    if (n == nullptr) return -1;
-    return n->getAltura();
-}
-
 int ArbolAVL::actualizarFB(Nodo* nodo)
 {
+    if (nodo == nullptr) return 0;
+    int fb = obtenerAltura(nodo->getDerecho()) - obtenerAltura(nodo->getIzquierdo());
+    nodo->setFactorBalance(fb);
+    return fb;
+}
+
+int ArbolAVL::obtenerAltura(Nodo* nodo)
+{
     if (nodo == nullptr) return -1;
-    //recore en postOrder
-
-    int alturaIzquierda = actualizarFB(nodo->getIzquierdo());
-    int alturaDerecha = actualizarFB(nodo->getDerecho());
-
-    nodo->setAltura(std::max(alturaIzquierda, alturaDerecha) + 1);
-    nodo->setFactorBalance(alturaDerecha - alturaIzquierda);
-
-    return nodo->getAltura();
+    return std::max(obtenerAltura(nodo->getIzquierdo()), obtenerAltura(nodo->getDerecho())) + 1;
 }
 
 NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
@@ -88,19 +82,32 @@ NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
     if (rz == nullptr) return nullptr;
 
     // PreOrder
+    actualizarFB(rz);
     if (rz->getFactorBalance() < -1)
     {
+        actualizarFB(rz->getIzquierdo());
         if (rz->getIzquierdo()->getFactorBalance() <= 0)
+        {
             rz = leftLeft(rz);
+        }
         else
+        {
             rz = leftRight(rz);
+        }
+        actualizarFB(rz);
     }
     else if (rz->getFactorBalance() > 1)
     {
+        actualizarFB(rz->getDerecho());
         if (rz->getDerecho()->getFactorBalance() >= 0)
+        {
             rz = rightRight(rz);
+        }
         else
+        {
             rz = rightLeft(rz);
+        }
+        actualizarFB(rz);
     }
 
     rz->setIzquierdo(checkBalance(rz->getIzquierdo()));
@@ -111,52 +118,27 @@ NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
 
 NodoAVL* ArbolAVL::leftLeft(Nodo* rz)
 {
-    Nodo* aux1  = rz->getIzquierdo();
-    Nodo* aux2 = aux1->getDerecho();
 
-    aux1->setDerecho(rz);
-    rz->setIzquierdo(aux2);
+    Nodo* nuevaRz = rz->getIzquierdo();
+    rz->setIzquierdo(nuevaRz->getDerecho());
+    nuevaRz->setDerecho(rz);
 
-    rz->setAltura(std::max(
-        alturaSegura(rz->getIzquierdo()),
-        alturaSegura(rz->getDerecho())) + 1);
-    rz->setFactorBalance(
-        alturaSegura(rz->getDerecho()) -
-        alturaSegura(rz->getIzquierdo()));
+    actualizarFB(rz);
+    actualizarFB(nuevaRz);
 
-    aux1->setAltura(std::max(
-        alturaSegura(aux1->getIzquierdo()),
-        alturaSegura(aux1->getDerecho())) + 1);
-    aux1->setFactorBalance(
-        alturaSegura(aux1->getDerecho()) -
-        alturaSegura(aux1->getIzquierdo()));
-
-    return aux1;
+    return nuevaRz;
 }
 
 NodoAVL* ArbolAVL::rightRight(Nodo* rz)
 {
-    Nodo* aux1  = rz->getDerecho();
-    Nodo* aux2 = aux1->getIzquierdo();
+    Nodo* nuevaRz = rz->getDerecho();
+    rz->setDerecho(nuevaRz->getIzquierdo());
+    nuevaRz->setIzquierdo(rz);
 
-    aux1->setIzquierdo(rz);
-    rz->setDerecho(aux2);
+    actualizarFB(rz);
+    actualizarFB(nuevaRz);
 
-    rz->setAltura(std::max(
-        alturaSegura(rz->getIzquierdo()),
-        alturaSegura(rz->getDerecho())) + 1);
-    rz->setFactorBalance(
-        alturaSegura(rz->getDerecho()) -
-        alturaSegura(rz->getIzquierdo()));
-
-    aux1->setAltura(std::max(
-        alturaSegura(aux1->getIzquierdo()),
-        alturaSegura(aux1->getDerecho())) + 1);
-    aux1->setFactorBalance(
-        alturaSegura(aux1->getDerecho()) -
-        alturaSegura(aux1->getIzquierdo()));
-
-    return aux1;
+    return nuevaRz;
 }
 
 NodoAVL* ArbolAVL::leftRight(Nodo* rz)

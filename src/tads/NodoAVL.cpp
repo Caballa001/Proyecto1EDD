@@ -8,7 +8,6 @@ NodoAVL::NodoAVL(Product* val)
 {
     this->valor = val;
     this->FactorBalance = 0;
-    this->altura = 0;
     this->izquierdo = nullptr;
     this->derecho = nullptr;
 }
@@ -38,16 +37,6 @@ int NodoAVL::getFactorBalance()
 void NodoAVL::setFactorBalance(int fb)
 {
     this->FactorBalance = fb;
-}
-
-int NodoAVL::getAltura()
-{
-    return this->altura;
-}
-
-void NodoAVL::setAltura(int alt)
-{
-    this->altura = alt;
 }
 
 NodoAVL* NodoAVL::getIzquierdo()

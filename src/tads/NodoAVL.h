@@ -11,7 +11,6 @@ class NodoAVL
 private:
     Product* valor;
     int FactorBalance;
-    int altura;
     NodoAVL* izquierdo;
     NodoAVL* derecho;
 public:
@@ -24,8 +23,6 @@ public:
     int getFactorBalance();
     void setFactorBalance(int fb);
 
-    int getAltura();
-    void setAltura(int alt);
 
     NodoAVL* getIzquierdo();
     void setIzquierdo(NodoAVL* hijo);
