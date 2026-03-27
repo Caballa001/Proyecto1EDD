@@ -57,14 +57,207 @@ void ArbolAVL::agregarNodo(NodoAVL* nodo, NodoAVL* rz)
     else
     {
         std::cout << "Valor duplicado, se descarta el producto" << std::endl;
+        std::cout << nodo->getValor()->name << " - " << rz->getValor()->name << std::endl;
         //TODO: agregar al log, flag de insercion fallida (para hacer rollback)
         delete nodo;
     }
 }
 
-void ArbolAVL::balancear(NodoAVL* rz)
+int ArbolAVL::alturaSegura(Nodo* n)
 {
-    //todo implementar metodos de balanceo
+    if (n == nullptr) return -1;
+    return n->getAltura();
+}
+
+int ArbolAVL::actualizarFB(Nodo* nodo)
+{
+    if (nodo == nullptr) return -1;
+    //recore en postOrder
+
+    int alturaIzquierda = actualizarFB(nodo->getIzquierdo());
+    int alturaDerecha = actualizarFB(nodo->getDerecho());
+
+    nodo->setAltura(std::max(alturaIzquierda, alturaDerecha) + 1);
+    nodo->setFactorBalance(alturaDerecha - alturaIzquierda);
+
+    return nodo->getAltura();
+}
+
+NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
+{
+    if (rz == nullptr) return nullptr;
+
+    // PreOrder
+    if (rz->getFactorBalance() < -1)
+    {
+        if (rz->getIzquierdo()->getFactorBalance() <= 0)
+            rz = leftLeft(rz);
+        else
+            rz = leftRight(rz);
+    }
+    else if (rz->getFactorBalance() > 1)
+    {
+        if (rz->getDerecho()->getFactorBalance() >= 0)
+            rz = rightRight(rz);
+        else
+            rz = rightLeft(rz);
+    }
+
+    rz->setIzquierdo(checkBalance(rz->getIzquierdo()));
+    rz->setDerecho(checkBalance(rz->getDerecho()));
+
+    return rz;
+}
+
+NodoAVL* ArbolAVL::leftLeft(Nodo* rz)
+{
+    Nodo* aux1  = rz->getIzquierdo();
+    Nodo* aux2 = aux1->getDerecho();
+
+    aux1->setDerecho(rz);
+    rz->setIzquierdo(aux2);
+
+    rz->setAltura(std::max(
+        alturaSegura(rz->getIzquierdo()),
+        alturaSegura(rz->getDerecho())) + 1);
+    rz->setFactorBalance(
+        alturaSegura(rz->getDerecho()) -
+        alturaSegura(rz->getIzquierdo()));
+
+    aux1->setAltura(std::max(
+        alturaSegura(aux1->getIzquierdo()),
+        alturaSegura(aux1->getDerecho())) + 1);
+    aux1->setFactorBalance(
+        alturaSegura(aux1->getDerecho()) -
+        alturaSegura(aux1->getIzquierdo()));
+
+    return aux1;
+}
+
+NodoAVL* ArbolAVL::rightRight(Nodo* rz)
+{
+    Nodo* aux1  = rz->getDerecho();
+    Nodo* aux2 = aux1->getIzquierdo();
+
+    aux1->setIzquierdo(rz);
+    rz->setDerecho(aux2);
+
+    rz->setAltura(std::max(
+        alturaSegura(rz->getIzquierdo()),
+        alturaSegura(rz->getDerecho())) + 1);
+    rz->setFactorBalance(
+        alturaSegura(rz->getDerecho()) -
+        alturaSegura(rz->getIzquierdo()));
+
+    aux1->setAltura(std::max(
+        alturaSegura(aux1->getIzquierdo()),
+        alturaSegura(aux1->getDerecho())) + 1);
+    aux1->setFactorBalance(
+        alturaSegura(aux1->getDerecho()) -
+        alturaSegura(aux1->getIzquierdo()));
+
+    return aux1;
+}
+
+NodoAVL* ArbolAVL::leftRight(Nodo* rz)
+{
+    rz->setIzquierdo(rightRight(rz->getIzquierdo()));
+    return leftLeft(rz);
+}
+
+NodoAVL* ArbolAVL::rightLeft(Nodo* rz)
+{
+    rz->setDerecho(leftLeft(rz->getDerecho()));
+    return rightRight(rz);
+}
+
+std::string ArbolAVL::encontrarNombrePorBarcode(Nodo* rz, const std::string& barcode)
+{
+    if (rz == nullptr) return "";
+
+    if (rz->getValor()->barcode == barcode)
+        return rz->getValor()->name;
+
+    std::string resultado = encontrarNombrePorBarcode(rz->getIzquierdo(), barcode);
+    if (!resultado.empty()) return resultado;
+
+    return encontrarNombrePorBarcode(rz->getDerecho(), barcode);
+}
+
+NodoAVL* ArbolAVL::encontrarMinimo(Nodo* rz)
+{
+    Nodo* actual = rz;
+    while (actual->getIzquierdo() != nullptr)
+        actual = actual->getIzquierdo();
+    return actual;
+}
+
+NodoAVL* ArbolAVL::eliminarPorNombre(Nodo* rz, const std::string& nombre)
+{
+    if (rz == nullptr) return nullptr;
+
+    valorAZ orden = valorOrdenarAZ(nombre, rz->getValor()->name);
+    if (orden == valorAZ::izquierda)
+    {
+        rz->setIzquierdo(eliminarPorNombre(rz->getIzquierdo(), nombre));
+    }
+    else if (orden == valorAZ::derecha)
+    {
+        rz->setDerecho(eliminarPorNombre(rz->getDerecho(), nombre));
+    }
+    else
+    {
+        // Casos posibles de hijos
+        if (rz->getIzquierdo() == nullptr && rz->getDerecho() == nullptr)
+        {
+            rz->setIzquierdo(nullptr);
+            rz->setDerecho(nullptr);
+            delete rz;
+            return nullptr;
+        }
+        else if (rz->getIzquierdo() == nullptr)
+        {
+            Nodo* temp = rz->getDerecho();
+            rz->setIzquierdo(nullptr);
+            rz->setDerecho(nullptr);
+            delete rz;
+            return temp;
+        }
+        else if (rz->getDerecho() == nullptr)
+        {
+            Nodo* temp = rz->getIzquierdo();
+            rz->setIzquierdo(nullptr);
+            rz->setDerecho(nullptr);
+            delete rz;
+            return temp;
+        }
+        else
+        {
+            Nodo* sucesor = encontrarMinimo(rz->getDerecho());
+            std::string nombreSucesor = sucesor->getValor()->name;
+
+            delete rz->getValor();
+            rz->setValor(new Product(*sucesor->getValor()));
+
+            rz->setDerecho(eliminarPorNombre(rz->getDerecho(), nombreSucesor));
+        }
+    }
+
+    return rz;
+}
+
+void ArbolAVL::eliminarNodo(const std::string& barcode)
+{
+    std::string nombre = encontrarNombrePorBarcode(this->raiz, barcode);
+    if (nombre.empty())
+    {
+        std::cout << "Producto con codigo de barra '" << barcode << "' no encontrado." << std::endl;
+        return;
+    }
+
+    this->raiz = eliminarPorNombre(this->raiz, nombre);
+    actualizarFB(this->raiz);
+    this->raiz = checkBalance(this->raiz);
 }
 
 void ArbolAVL::listarInorder(Nodo* rz)
@@ -75,5 +268,3 @@ void ArbolAVL::listarInorder(Nodo* rz)
     std::cout << rz->getValor()->barcode << " - " << rz->getValor()->name << std::endl;
     listarInorder(rz->getDerecho());
 }
-
-

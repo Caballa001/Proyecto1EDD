@@ -16,6 +16,10 @@ class ArbolAVL
     using Nodo = NodoAVL;
 private:
     Nodo* raiz;
+    int alturaSegura(Nodo* n);
+    std::string encontrarNombrePorBarcode(Nodo* rz, const std::string& barcode);
+    Nodo* encontrarMinimo(Nodo* rz);
+    Nodo* eliminarPorNombre(Nodo* rz, const std::string& nombre);
 
 public:
     ArbolAVL(Nodo* rz);
@@ -25,7 +29,14 @@ public:
     void setRaiz(Nodo* rz);
 
     void agregarNodo(Nodo* nodo, Nodo* rz);
-    void balancear(Nodo* rz);
+    void eliminarNodo(const std::string& barcode);
+    Nodo* checkBalance(Nodo* rz);
+    Nodo* leftLeft(Nodo* nodo);
+    Nodo* rightRight(Nodo* nodo);
+    Nodo* leftRight(Nodo* nodo);
+    Nodo* rightLeft(Nodo* nodo);
+
+    int actualizarFB(Nodo* nodo);
 
     void listarInorder(Nodo* rz);
 };

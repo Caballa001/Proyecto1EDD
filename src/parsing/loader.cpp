@@ -30,4 +30,7 @@ void loader(std::vector<Product>& listaProductos)
             listaDesordenada->agregarSiguiente(nodoLista1);
             listaOrdenada->agregarSiguiente(nodoLista2);
         }
+
+        arbolAVL->actualizarFB(arbolAVL->getRaiz());
+        arbolAVL->setRaiz(arbolAVL->checkBalance(arbolAVL->getRaiz()));
 }
