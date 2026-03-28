@@ -18,7 +18,13 @@ public:
 
     Nodo* getCabeza();
     void setCabeza(Nodo* cab);
-    void agregarSiguiente(Nodo* sig);
+    void agregar(Nodo* primero);
+    bool isUnico(Nodo* cbz, std::string barcode);
+    Product* buscarPorNombre(std::string nombre);
+    void agregarEnOrden(Nodo* nodo);
+    void eliminarPorNombre(std::string nombre);
+
+    void listarProductos();
 };
 
 

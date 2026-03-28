@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <limits>
 
 #include "globals.h"
 #include "export/generarDot.h"
@@ -52,8 +53,7 @@ std::string validarEntradaString()
 {
 	std::string input;
 	std::getline(std::cin, input);
-	trim(input);
-	return input;
+	return trim(input);
 }
 
 void mostrarProductoDetalle(Product* product)
@@ -85,7 +85,6 @@ void menuBuscarEstructura()
 		std::cout << "------------------------------" << std::endl;
 		std::vector<std::string> options ={
 			"AVL: Buscar por nombre",
-			"B+: Buscar por categoría",
 			"B-: Buscar por caducidad",
 			"Regresar"
 
@@ -107,12 +106,9 @@ void menuBuscarEstructura()
 			mostrarProductoDetalle(product);
 			break;
 		case 1:
-			//BuscarBplus();
-			break;
-		case 2:
 			//BuscarBminus();
 			break;
-		case 3:
+		case 2:
 			std::cout << "Regresando al menu principal..." << std::endl;
 			salir = true;
 			break;
@@ -125,13 +121,13 @@ void menuBuscarEstructura()
 void menuEliminarEstructura()
 {
 	bool salir = false;
-	std::vector<Product> products;
+	std::string eliminarInput;
 
 	while (!salir)
 	{
 		std::cout << "------------------------------" << std::endl;
 		std::vector<std::string> options ={
-			"Eliminar por Codigo de Barra",
+			"Eliminar por Nombre",
 			"Regresar"
 
 		};
@@ -144,7 +140,11 @@ void menuEliminarEstructura()
 
 		switch (opcion) {
 		case 0:
-			//BuscarAVL();
+			std::cout << "Ingrese el nombre del producto a eliminar: ";
+			eliminarInput = validarEntradaString();
+			arbolAVL->eliminarNodo(eliminarInput);
+			listaDesordenada->eliminarPorNombre(eliminarInput);
+			listaOrdenada->eliminarPorNombre(eliminarInput);
 			break;
 		case 1:
 			std::cout << "Regresando al menu principal..." << std::endl;
@@ -217,6 +217,9 @@ void menuVisualizar()
 			break;
 		case 1:
 			arbolAVL->listarInorder(arbolAVL->getRaiz());
+			//DEBUG: listar productos
+			listaDesordenada->listarProductos();
+			listaOrdenada->listarProductos();
 			break;
 		case 2:
 			std::cout << "Regresando al menu principal..." << std::endl;
@@ -239,9 +242,9 @@ void menuPrincipal() {
 			"Cargar nuevo CSV",
 			"Limpiar sistema",
 			"Buscar en estructuras",
-			"Medicion de rendimiento",
 			"Eliminar en estructuras",
 			"Visualizar estructuras",
+			"Medicion de rendimiento",
 			"Salir"
 		};
 
@@ -264,13 +267,13 @@ void menuPrincipal() {
 			menuBuscarEstructura();
 			break;
 		case 3:
-			menuMedicion();
-			break;
-		case 4:
 			menuEliminarEstructura();
 			break;
-		case 5:
+		case 4:
 			menuVisualizar();
+			break;
+		case 5:
+			menuMedicion();
 			break;
 		case 6:
 			std::cout << "Saliendo de la aplicación" << std::endl;

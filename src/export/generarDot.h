@@ -5,8 +5,6 @@
 #ifndef ARBOLES_GENERARDOT_H
 #define ARBOLES_GENERARDOT_H
 #include <vector>
-#include <graphviz/gvc.h>
-#include <graphviz/cgraph.h>
 #include "../tads/NodoAVL.h"
 
 void generarDot(NodoAVL* nodo);

@@ -29,8 +29,6 @@ set(SOURCES
         src/parsing/loader.h
         src/export/generarDot.cpp
         src/export/generarDot.h
-        src/export/listarInorderAvl.cpp
-        src/export/listarInorderAvl.h
 )
 
 # Graphviz

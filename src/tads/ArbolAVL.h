@@ -25,7 +25,7 @@ public:
     void setRaiz(Nodo* rz);
 
     void agregarNodo(Nodo* nodo, Nodo* rz);
-    void eliminarNodo(const std::string& barcode);
+    void eliminarNodo(const std::string& nombre);
     Nodo* checkBalance(Nodo* rz);
     Nodo* leftLeft(Nodo* nodo);
     Nodo* rightRight(Nodo* nodo);

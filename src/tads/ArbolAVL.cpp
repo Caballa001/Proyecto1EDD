@@ -81,7 +81,10 @@ NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
 {
     if (rz == nullptr) return nullptr;
 
-    // PreOrder
+    // PostOrder: fix children first so heights are correct when we check this node
+    rz->setIzquierdo(checkBalance(rz->getIzquierdo()));
+    rz->setDerecho(checkBalance(rz->getDerecho()));
+
     actualizarFB(rz);
     if (rz->getFactorBalance() < -1)
     {
@@ -110,8 +113,6 @@ NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
         actualizarFB(rz);
     }
 
-    rz->setIzquierdo(checkBalance(rz->getIzquierdo()));
-    rz->setDerecho(checkBalance(rz->getDerecho()));
 
     return rz;
 }
@@ -160,10 +161,12 @@ Product* ArbolAVL::buscarProductPorNombre(Nodo* rz, std::string nombre)
     if (rz->getValor()->name == nombre)
         return rz->getValor();
 
-    Product* producto1 = buscarProductPorNombre(rz->getIzquierdo(), nombre);
-    if (producto1 != nullptr) return producto1;
-    Product* producto2 = buscarProductPorNombre(rz->getDerecho(), nombre);
-    if (producto2 != nullptr) return producto2;
+    valorAZ orden = valorOrdenarAZ(nombre, rz->getValor()->name);
+    if (orden == valorAZ::izquierda)
+        return buscarProductPorNombre(rz->getIzquierdo(), nombre);
+    if (orden == valorAZ::derecha)
+        return buscarProductPorNombre(rz->getDerecho(), nombre);
+    return rz->getValor();
 
     return nullptr;
 }
@@ -207,15 +210,12 @@ NodoAVL* ArbolAVL::eliminarPorNombre(Nodo* rz, const std::string& nombre)
         // Casos posibles de hijos
         if (rz->getIzquierdo() == nullptr && rz->getDerecho() == nullptr)
         {
-            rz->setIzquierdo(nullptr);
-            rz->setDerecho(nullptr);
             delete rz;
             return nullptr;
         }
         else if (rz->getIzquierdo() == nullptr)
         {
             Nodo* temp = rz->getDerecho();
-            rz->setIzquierdo(nullptr);
             rz->setDerecho(nullptr);
             delete rz;
             return temp;
@@ -224,7 +224,6 @@ NodoAVL* ArbolAVL::eliminarPorNombre(Nodo* rz, const std::string& nombre)
         {
             Nodo* temp = rz->getIzquierdo();
             rz->setIzquierdo(nullptr);
-            rz->setDerecho(nullptr);
             delete rz;
             return temp;
         }
@@ -243,17 +242,15 @@ NodoAVL* ArbolAVL::eliminarPorNombre(Nodo* rz, const std::string& nombre)
     return rz;
 }
 
-void ArbolAVL::eliminarNodo(const std::string& barcode)
+void ArbolAVL::eliminarNodo(const std::string& nombre)
 {
-    std::string nombre = encontrarNombrePorBarcode(this->raiz, barcode);
-    if (nombre.empty())
+    if (buscarProductPorNombre(this->raiz, nombre) == nullptr)
     {
-        std::cout << "Producto con codigo de barra '" << barcode << "' no encontrado." << std::endl;
+        std::cout << "Producto '" << nombre << "' no encontrado." << std::endl;
         return;
     }
 
     this->raiz = eliminarPorNombre(this->raiz, nombre);
-    actualizarFB(this->raiz);
     this->raiz = checkBalance(this->raiz);
 }
 

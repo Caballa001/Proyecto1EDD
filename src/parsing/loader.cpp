@@ -24,13 +24,13 @@ void loader(std::vector<Product>& listaProductos)
             NodoAVL* nodoAVL = new NodoAVL(productoCopia);
             NodoLista* nodoLista1 = new NodoLista(productoCopia2);
             NodoLista* nodoLista2 = new NodoLista(productoCopia3);
-            // TODO Aquí se insertaría nodoAVL en el árbol AVL y nodoLista en la lista
+            // TODO Check de duplicados
             // Por ejemplo:
             arbolAVL->agregarNodo(nodoAVL, arbolAVL->getRaiz());
-            listaDesordenada->agregarSiguiente(nodoLista1);
-            listaOrdenada->agregarSiguiente(nodoLista2);
+            listaDesordenada->agregar(nodoLista1);
+            listaOrdenada->agregarEnOrden(nodoLista2);
 
-            arbolAVL->actualizarFB(arbolAVL->getRaiz());
+            // checkBalance now recomputes all FBs bottom-up internally
             arbolAVL->setRaiz(arbolAVL->checkBalance(arbolAVL->getRaiz()));
         }
 
