@@ -153,6 +153,21 @@ NodoAVL* ArbolAVL::rightLeft(Nodo* rz)
     return rightRight(rz);
 }
 
+Product* ArbolAVL::buscarProductPorNombre(Nodo* rz, std::string nombre)
+{
+    if (rz == nullptr) return nullptr;
+
+    if (rz->getValor()->name == nombre)
+        return rz->getValor();
+
+    Product* producto1 = buscarProductPorNombre(rz->getIzquierdo(), nombre);
+    if (producto1 != nullptr) return producto1;
+    Product* producto2 = buscarProductPorNombre(rz->getDerecho(), nombre);
+    if (producto2 != nullptr) return producto2;
+
+    return nullptr;
+}
+
 std::string ArbolAVL::encontrarNombrePorBarcode(Nodo* rz, const std::string& barcode)
 {
     if (rz == nullptr) return "";
@@ -162,8 +177,8 @@ std::string ArbolAVL::encontrarNombrePorBarcode(Nodo* rz, const std::string& bar
 
     std::string resultado = encontrarNombrePorBarcode(rz->getIzquierdo(), barcode);
     if (!resultado.empty()) return resultado;
-
-    return encontrarNombrePorBarcode(rz->getDerecho(), barcode);
+    resultado =  encontrarNombrePorBarcode(rz->getDerecho(), barcode);
+    return resultado;
 }
 
 NodoAVL* ArbolAVL::encontrarMinimo(Nodo* rz)

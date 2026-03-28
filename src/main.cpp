@@ -33,6 +33,7 @@ void validarEntradaInt(int& opcion)
 {
 	std::string input;
 	std::cin >> input;
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	std::size_t pos; // solo int sin signo
 	try {
 		opcion = std::stoi(input, &pos);
@@ -47,10 +48,37 @@ void validarEntradaInt(int& opcion)
 	}
 }
 
+std::string validarEntradaString()
+{
+	std::string input;
+	std::getline(std::cin, input);
+	trim(input);
+	return input;
+}
+
+void mostrarProductoDetalle(Product* product)
+{
+	if (product == nullptr)
+	{
+		std::cout << "Producto no encontrado." << std::endl;
+		return;
+	}
+
+	std::cout << "--------------- PRODUCTO ---------------" << std::endl;
+	std::cout << "| Nombre: \t\t\t\t" << product->name << std::endl;
+	std::cout << "| Codigo de Barra: \t\t" << product->barcode << std::endl;
+	std::cout << "| Categoria: \t\t\t" << product->category << std::endl;
+	std::cout << "| Fecha de Caducidad: \t" << product->expiry_date << std::endl;
+	std::cout << "| Marca: \t\t\t\t" << product->brand << std::endl;
+	std::cout << "| Precio: \t\t\t\tQ" << product->price << std::endl;
+	std::cout << "| Stock: \t\t\t\t" << product->stock << std::endl;
+	std::cout << "---------------------------------------" << std::endl;
+}
+
 void menuBuscarEstructura()
 {
 	bool salir = false;
-	std::vector<Product> products;
+	Product* product;
 
 	while (!salir)
 	{
@@ -71,7 +99,12 @@ void menuBuscarEstructura()
 
 		switch (opcion) {
 		case 0:
-			//BuscarAVL();
+			std::cout << "Ingrese el nombre del producto a buscar: ";
+			product = arbolAVL->buscarProductPorNombre(
+					arbolAVL->getRaiz(),
+					validarEntradaString()
+					);
+			mostrarProductoDetalle(product);
 			break;
 		case 1:
 			//BuscarBplus();

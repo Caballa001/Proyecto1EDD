@@ -32,9 +32,9 @@ public:
     Nodo* leftRight(Nodo* nodo);
     Nodo* rightLeft(Nodo* nodo);
     int obtenerAltura(Nodo* nodo);
-
     int actualizarFB(Nodo* nodo);
 
+    Product* buscarProductPorNombre(Nodo* rz, std::string nombre);
     std::string encontrarNombrePorBarcode(Nodo* rz, const std::string& barcode);
     Nodo* encontrarMinimo(Nodo* rz);
     Nodo* eliminarPorNombre(Nodo* rz, const std::string& nombre);

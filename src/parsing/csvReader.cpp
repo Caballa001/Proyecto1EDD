@@ -122,7 +122,7 @@ std::vector<Product> csvReader()
 {
     std::cout << "Ingrese la dirección del archivo: ";
     std::string path;
-    std::cin >> path;
+    std::getline(std::cin, path);
     path = trim(path);
     if (path.empty())
     {
