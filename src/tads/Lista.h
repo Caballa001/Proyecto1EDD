@@ -20,6 +20,8 @@ public:
     void setCabeza(Nodo* cab);
     void agregar(Nodo* primero);
     bool isUnico(Nodo* cbz, std::string barcode);
+    int getSize(Nodo* cabeza);
+
     Product* buscarPorNombre(std::string nombre);
     void agregarEnOrden(Nodo* nodo);
     void eliminarPorNombre(std::string nombre);

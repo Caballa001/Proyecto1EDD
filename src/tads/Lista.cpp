@@ -4,6 +4,7 @@
 
 #include "../tads/Lista.h"
 
+#include <chrono>
 #include <iostream>
 
 Lista::Lista(NodoLista* cabeza)
@@ -55,6 +56,17 @@ bool Lista::isUnico(Nodo* cbz, std::string barcode)
     if (cbz == nullptr) return true;
     if (cbz->getValor()->barcode == barcode) return false;
     return isUnico(cbz->getSigiente(), barcode);
+}
+
+int Lista::getSize(Nodo* cabeza)
+{
+    int size = 0;
+    while (cabeza != nullptr)
+    {
+        size++;
+        cabeza = cabeza->getSigiente();
+    }
+    return size;
 }
 
 Product* Lista::buscarPorNombre(std::string nombre)

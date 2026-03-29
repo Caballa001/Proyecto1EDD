@@ -18,19 +18,28 @@ void loader(std::vector<Product>& listaProductos)
 
         for (Product& p : listaProductos)
         {
+            if (!listaDesordenada->isUnico(listaDesordenada->getCabeza(), p.barcode))
+            {
+                std::cout << "Producto con barcode " << p.barcode << " ya existe, se descarta el producto" << std::endl;
+                continue;
+            }
+            if (arbolAVL->buscarProductPorNombre(arbolAVL->getRaiz(), p.name) != nullptr)
+            {
+                std::cout << "Producto con nombre " << p.name << " ya existe en el arbol, se descarta el producto" << std::endl;
+                continue;
+            }
+
             Product* productoCopia = new Product(p);
             Product* productoCopia2 = new Product(p);
             Product* productoCopia3 = new Product(p);
             NodoAVL* nodoAVL = new NodoAVL(productoCopia);
             NodoLista* nodoLista1 = new NodoLista(productoCopia2);
             NodoLista* nodoLista2 = new NodoLista(productoCopia3);
-            // TODO Check de duplicados
-            // Por ejemplo:
+
             arbolAVL->agregarNodo(nodoAVL, arbolAVL->getRaiz());
             listaDesordenada->agregar(nodoLista1);
             listaOrdenada->agregarEnOrden(nodoLista2);
 
-            // checkBalance now recomputes all FBs bottom-up internally
             arbolAVL->setRaiz(arbolAVL->checkBalance(arbolAVL->getRaiz()));
         }
 

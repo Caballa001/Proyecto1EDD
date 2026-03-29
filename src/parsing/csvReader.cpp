@@ -10,6 +10,9 @@
 #include "../clases/Product.h"
 #include "./csvReader.h"
 
+#include "globals.h"
+#include "./logger/logger.h"
+
 //----------------------- Helper
 
 std::string trim (std::string& strTrim)
@@ -22,6 +25,39 @@ std::string trim (std::string& strTrim)
     }
     size_t posLastChar = strTrim.find_last_not_of(enBlanco);
     return strTrim.substr(posPrimerChar, (posLastChar - posPrimerChar + 1));
+}
+
+bool inputIsDouble (std::string str)
+{
+    if (str.empty()) return false;
+    try {
+        std::size_t pos;
+        std::stod(str, &pos);
+        return pos == str.length();
+    } catch (const std::invalid_argument& e)
+    {
+        return false;
+    } catch (const std::out_of_range& e)
+    {
+        return false;
+    }
+}
+
+bool inputIsInt (std::string str)
+{
+    if (str.empty()) return false;
+    try
+    {
+        std::size_t pos;
+        std::stoi(str, &pos);
+        return pos == str.length();
+    } catch (const std::invalid_argument& e)
+    {
+        return false;
+    } catch (const std::out_of_range& e)
+    {
+        return false;
+    }
 }
 
 // -------------------------- Parseo de contenido
@@ -80,7 +116,21 @@ std::vector<Product> parseCSV(std::string& content)
 
         std::vector<std::string> fields = splitCSVLine(line);
 
-        if (fields.size() != 7) continue; // skip malformed lines
+        if (fields.size() != 7)  // Skip si no son 7 lineas
+        {
+            loggerGlob->logBadLine(line);
+            continue;
+        }
+        if (!inputIsDouble(fields[5])) // Si no es double
+        {
+            loggerGlob->logEvent("Precio no valido en linea: " + line);
+            continue;
+        }
+        if (!inputIsInt(fields[6])) // Si no es int
+        {
+            loggerGlob->logEvent("Stock no valido en linea: " + line);
+            continue;
+        }
 
         Product p;
         p.name = fields[0];

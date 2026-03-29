@@ -6,6 +6,7 @@
 ArbolAVL* arbolAVL = new ArbolAVL(nullptr);
 Lista* listaDesordenada = new Lista(nullptr);
 Lista* listaOrdenada = new Lista(nullptr);
+logger* loggerGlob = new logger();
 
 void limpiarDatos()
 {

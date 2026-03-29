@@ -10,10 +10,12 @@
 #include "./tads/NodoAVL.h"
 #include "./tads/NodoLista.h"
 #include "./clases/Product.h"
+#include "./logger/logger.h"
 
 extern ArbolAVL* arbolAVL;
 extern Lista* listaDesordenada;
 extern Lista* listaOrdenada;
+extern logger* loggerGlob;
 //TODO add other structures
 
 void limpiarDatos();

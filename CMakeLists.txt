@@ -29,6 +29,8 @@ set(SOURCES
         src/parsing/loader.h
         src/export/generarDot.cpp
         src/export/generarDot.h
+        src/logger/logger.cpp
+        src/logger/logger.h
 )
 
 # Graphviz

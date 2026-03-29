@@ -1,6 +1,7 @@
 //
 // Created by yaxkin on 3/22/26.
 //
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -79,6 +80,7 @@ void menuBuscarEstructura()
 {
 	bool salir = false;
 	Product* product;
+	std::string buscarInput;
 
 	while (!salir)
 	{
@@ -98,13 +100,32 @@ void menuBuscarEstructura()
 
 		switch (opcion) {
 		case 0:
-			std::cout << "Ingrese el nombre del producto a buscar: ";
-			product = arbolAVL->buscarProductPorNombre(
-					arbolAVL->getRaiz(),
-					validarEntradaString()
-					);
-			mostrarProductoDetalle(product);
-			break;
+			{
+				std::cout << "Ingrese el nombre del producto: " << std::endl;
+				buscarInput = validarEntradaString();
+				auto timeIni = std::chrono::high_resolution_clock::now();
+				product = arbolAVL->buscarProductPorNombre(
+						arbolAVL->getRaiz(),
+						buscarInput
+						);
+				auto timeEnd = std::chrono::high_resolution_clock::now();
+				auto duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de busqueda en ArbolAVL: " << duracion.count() << " microsegundos (μs)" << std::endl;
+				mostrarProductoDetalle(product);
+
+				timeIni = std::chrono::high_resolution_clock::now();
+				product = listaDesordenada->buscarPorNombre(buscarInput);
+				timeEnd = std::chrono::high_resolution_clock::now();
+				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de busqueda en Lista Desordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
+
+				timeIni = std::chrono::high_resolution_clock::now();
+				product = listaOrdenada->buscarPorNombre(buscarInput);
+				timeEnd = std::chrono::high_resolution_clock::now();
+				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de busqueda en Lista Ordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
+				break;
+			}
 		case 1:
 			//BuscarBminus();
 			break;
@@ -258,7 +279,18 @@ void menuPrincipal() {
 		case 0:
 			products = csvReader();
 			loader(products);
-			std::cout << "Archivo cargado con " << products.size() << " productos." << std::endl;
+			if (!loggerGlob->isEmptyLog())
+			{
+				std::cout <<
+					"Advertencia: Se encontraron errores en el archivo de carga, se registraron en errores.log"
+				<< std::endl;
+				std::cout <<
+					"Se puede encontrar en la carpeta salidas/"
+				<< std::endl;
+				loggerGlob->saveLogToFile("errores.log");
+			}
+			std::cout << "Carga completada. \nSe cargaron " << listaOrdenada->getSize(listaOrdenada->getCabeza()) << " productos." << std::endl;
+
 			break;
 		case 1:
 			limpiarDatos();
