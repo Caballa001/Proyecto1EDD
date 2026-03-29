@@ -20,12 +20,12 @@ void loader(std::vector<Product>& listaProductos)
         {
             if (!listaDesordenada->isUnico(listaDesordenada->getCabeza(), p.barcode))
             {
-                std::cout << "Producto con barcode " << p.barcode << " ya existe, se descarta el producto" << std::endl;
+                loggerGlob->logEvent("Producto con barcode " + p.barcode + " ya existe, se descarta el producto");
                 continue;
             }
             if (arbolAVL->buscarProductPorNombre(arbolAVL->getRaiz(), p.name) != nullptr)
             {
-                std::cout << "Producto con nombre " << p.name << " ya existe en el arbol, se descarta el producto" << std::endl;
+                loggerGlob->logEvent("Producto con nombre " + p.name + " ya existe en el arbol, se descarta el producto");
                 continue;
             }
 
