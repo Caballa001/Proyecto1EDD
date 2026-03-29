@@ -103,6 +103,7 @@ void menuBuscarEstructura()
 			{
 				std::cout << "Ingrese el nombre del producto: " << std::endl;
 				buscarInput = validarEntradaString();
+
 				auto timeIni = std::chrono::high_resolution_clock::now();
 				product = arbolAVL->buscarProductPorNombre(
 						arbolAVL->getRaiz(),
@@ -161,12 +162,29 @@ void menuEliminarEstructura()
 
 		switch (opcion) {
 		case 0:
-			std::cout << "Ingrese el nombre del producto a eliminar: ";
-			eliminarInput = validarEntradaString();
-			arbolAVL->eliminarNodo(eliminarInput);
-			listaDesordenada->eliminarPorNombre(eliminarInput);
-			listaOrdenada->eliminarPorNombre(eliminarInput);
-			break;
+			{
+				std::cout << "Ingrese el nombre del producto a eliminar: ";
+				eliminarInput = validarEntradaString();
+
+				auto timeIni = std::chrono::high_resolution_clock::now();
+				arbolAVL->eliminarNodo(eliminarInput);
+				auto timeEnd = std::chrono::high_resolution_clock::now();
+				auto duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de operacion en ArbolAVL: " << duracion.count() << " microsegundos (μs)" << std::endl;
+
+				timeIni = std::chrono::high_resolution_clock::now();
+				listaDesordenada->eliminarPorNombre(eliminarInput);
+				timeEnd = std::chrono::high_resolution_clock::now();
+				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de operacion en Lista Desordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
+
+				timeIni = std::chrono::high_resolution_clock::now();
+				listaOrdenada->eliminarPorNombre(eliminarInput);
+				timeEnd = std::chrono::high_resolution_clock::now();
+				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
+				std::cout << "Tiempo de operacion en Lista Ordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
+				break;
+			}
 		case 1:
 			std::cout << "Regresando al menu principal..." << std::endl;
 			salir = true;
