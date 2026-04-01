@@ -43,9 +43,9 @@ void logger::saveLogToFile(std::string filename)
     std::cout << "Log guardado en: " << filePath << std::endl;
 }
 
-void logger::logBadLine(std::string line)
+void logger::logBadLine(std::string line, int idx)
 {
-    std::string logEntry = "Linea no valida: " + line;
+    std::string logEntry = "Linea " + std::to_string(idx) + " no valida: " + line;
     addLog(logEntry);
 }
 

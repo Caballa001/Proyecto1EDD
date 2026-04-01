@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.28)
 
 project(Arboles)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -21,16 +21,22 @@ set(SOURCES
         src/tads/NodoAVL.cpp
         src/tads/NodoAVL.h
         src/parsing/loader.cpp
-        src/helperMethods/valorOrdenAZ.cpp
+        src/helperMethods/helperMethods.cpp
         src/globals.cpp
         src/globals.h
-        src/helperMethods/valorOrdenarAZ.h
+        src/helperMethods/helperMethods.h
         src/parsing/csvReader.h
         src/parsing/loader.h
         src/export/generarDot.cpp
         src/export/generarDot.h
         src/logger/logger.cpp
         src/logger/logger.h
+        src/tads/NodoB.cpp
+        src/tads/NodoB.h
+        src/tads/ArbolB.cpp
+        src/tads/ArbolB.h
+        examples/Btree.h
+        examples/Btree.cpp
 )
 
 # Graphviz

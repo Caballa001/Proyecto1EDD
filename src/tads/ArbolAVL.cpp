@@ -31,6 +31,7 @@ void ArbolAVL::agregarNodo(NodoAVL* nodo, NodoAVL* rz)
         this->raiz = nodo;
         return;
     }
+    // Comparacion Binaria
     valorAZ orden = valorOrdenarAZ(nodo->getValor()->name, rz->getValor()->name);
     if (orden == valorAZ::izquierda)
     {
@@ -58,7 +59,6 @@ void ArbolAVL::agregarNodo(NodoAVL* nodo, NodoAVL* rz)
     {
         std::cout << "Valor duplicado, se descarta el producto" << std::endl;
         std::cout << nodo->getValor()->name << " - " << rz->getValor()->name << std::endl;
-        //TODO: agregar al log, flag de insercion fallida (para hacer rollback)
         delete nodo;
     }
 }
@@ -81,7 +81,7 @@ NodoAVL* ArbolAVL::checkBalance(NodoAVL* rz)
 {
     if (rz == nullptr) return nullptr;
 
-    // PostOrder: fix children first so heights are correct when we check this node
+    // PostOrder
     rz->setIzquierdo(checkBalance(rz->getIzquierdo()));
     rz->setDerecho(checkBalance(rz->getDerecho()));
 
@@ -161,6 +161,7 @@ Product* ArbolAVL::buscarProductPorNombre(Nodo* rz, std::string nombre)
     if (rz->getValor()->name == nombre)
         return rz->getValor();
 
+    // Busqueda Binaria
     valorAZ orden = valorOrdenarAZ(nombre, rz->getValor()->name);
     if (orden == valorAZ::izquierda)
         return buscarProductPorNombre(rz->getIzquierdo(), nombre);
@@ -168,7 +169,6 @@ Product* ArbolAVL::buscarProductPorNombre(Nodo* rz, std::string nombre)
         return buscarProductPorNombre(rz->getDerecho(), nombre);
     return rz->getValor();
 
-    return nullptr;
 }
 
 std::string ArbolAVL::encontrarNombrePorBarcode(Nodo* rz, const std::string& barcode)

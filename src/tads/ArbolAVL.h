@@ -6,7 +6,7 @@
 #define ARBOLES_AVL_H
 #include "../tads/NodoAVL.h"
 #include "../clases/Product.h"
-#include "../helperMethods/valorOrdenarAZ.h"
+#include "../helperMethods/helperMethods.h"
 #include <iostream>
 #include <string>
 #include <vector>

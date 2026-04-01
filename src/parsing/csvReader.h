@@ -8,7 +8,6 @@
 #include <vector>
 #include "clases/Product.h"
 
-std::string trim (std::string& str);
 
 std::vector<std::string> splitCSVLine(const std::string& line);
 

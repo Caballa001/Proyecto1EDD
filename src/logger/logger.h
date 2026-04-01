@@ -17,7 +17,7 @@ public:
     void addLog(std::string event);
     void getLog();
     void saveLogToFile(std::string filename);
-    void logBadLine(std::string line);
+    void logBadLine(std::string line, int idx);
     void logEvent(std::string event);
     bool isEmptyLog();
 };

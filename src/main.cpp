@@ -10,6 +10,7 @@
 
 #include "globals.h"
 #include "export/generarDot.h"
+#include "helperMethods/helperMethods.h"
 #include "parsing/csvReader.h"
 #include "parsing/loader.h"
 
@@ -36,18 +37,13 @@ void validarEntradaInt(int& opcion)
 	std::string input;
 	std::cin >> input;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	std::size_t pos; // solo int sin signo
-	try {
-		opcion = std::stoi(input, &pos);
-		if (pos != input.length())
-		{
-			throw std::exception();
-		}
-	}
-	catch (std::exception&) {
+	if (!inputIsInt(input))
+	{
 		std::cout << "Entrada no valida. Intente de nuevo." << std::endl;
-		opcion = -1; // Opcion invalida
+		opcion = -1;
+		return;
 	}
+	opcion = std::stoi(input);
 }
 
 std::string validarEntradaString()
@@ -55,6 +51,19 @@ std::string validarEntradaString()
 	std::string input;
 	std::getline(std::cin, input);
 	return trim(input);
+}
+
+std::string validarEntradaFecha()
+{
+	std::string input;
+	std::getline(std::cin, input);
+	input = trim(input);
+	if (!inputIsDate(input))
+	{
+		std::cout << "Fecha no valida. Intente de nuevo." << std::endl;
+		return "";
+	}
+	return input;
 }
 
 void mostrarProductoDetalle(Product* product)
@@ -115,21 +124,27 @@ void menuBuscarEstructura()
 				mostrarProductoDetalle(product);
 
 				timeIni = std::chrono::high_resolution_clock::now();
-				product = listaDesordenada->buscarPorNombre(buscarInput);
+				listaDesordenada->buscarPorNombre(buscarInput);
 				timeEnd = std::chrono::high_resolution_clock::now();
 				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
 				std::cout << "Tiempo de busqueda en Lista Desordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
 
 				timeIni = std::chrono::high_resolution_clock::now();
-				product = listaOrdenada->buscarPorNombre(buscarInput);
+				listaOrdenada->buscarPorNombre(buscarInput);
 				timeEnd = std::chrono::high_resolution_clock::now();
 				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
 				std::cout << "Tiempo de busqueda en Lista Ordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
 				break;
 			}
 		case 1:
-			//BuscarBminus();
-			break;
+			{
+				std::cout << "Ingrese la fecha a buscar: " << std::endl;
+				buscarInput = validarEntradaFecha();
+				if (buscarInput.empty()) break;
+				product = arbolB->buscar(buscarInput);
+				mostrarProductoDetalle(product);
+				break;
+			}
 		case 2:
 			std::cout << "Regresando al menu principal..." << std::endl;
 			salir = true;
@@ -165,60 +180,37 @@ void menuEliminarEstructura()
 			{
 				std::cout << "Ingrese el nombre del producto a eliminar: ";
 				eliminarInput = validarEntradaString();
+				Product* productoPtr = arbolAVL->buscarProductPorNombre(arbolAVL->getRaiz(), eliminarInput);
+				if (productoPtr == nullptr)
+				{
+					std::cout << "Producto no encontrado. No se realizara ninguna eliminacion." << std::endl;
+					break;
+				}
+				std::string name = productoPtr->name;
+				std::string barcode = productoPtr->barcode;
+				std::string date = productoPtr->expiry_date;
 
 				auto timeIni = std::chrono::high_resolution_clock::now();
-				arbolAVL->eliminarNodo(eliminarInput);
+				arbolAVL->eliminarNodo(name);
 				auto timeEnd = std::chrono::high_resolution_clock::now();
 				auto duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
 				std::cout << "Tiempo de operacion en ArbolAVL: " << duracion.count() << " microsegundos (μs)" << std::endl;
 
 				timeIni = std::chrono::high_resolution_clock::now();
-				listaDesordenada->eliminarPorNombre(eliminarInput);
+				listaDesordenada->eliminarPorNombre(name);
 				timeEnd = std::chrono::high_resolution_clock::now();
 				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
 				std::cout << "Tiempo de operacion en Lista Desordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
 
 				timeIni = std::chrono::high_resolution_clock::now();
-				listaOrdenada->eliminarPorNombre(eliminarInput);
+				listaOrdenada->eliminarPorNombre(name);
 				timeEnd = std::chrono::high_resolution_clock::now();
 				duracion = std::chrono::duration_cast<std::chrono::microseconds>(timeEnd - timeIni);
 				std::cout << "Tiempo de operacion en Lista Ordenada: " << duracion.count() << " microsegundos (μs)" << std::endl;
+
+				arbolB->eliminar(barcode,date);
 				break;
 			}
-		case 1:
-			std::cout << "Regresando al menu principal..." << std::endl;
-			salir = true;
-			break;
-		default:
-			std::cout << "Opcion no valida. Intente de nuevo." << std::endl;
-		}
-	}
-}
-
-void menuMedicion()
-{
-	bool salir = false;
-	std::vector<Product> products;
-
-	while (!salir)
-	{
-		std::cout << "------------------------------" << std::endl;
-		std::vector<std::string> options ={
-			"Empezar Medicion de rendimiento (AVL vs Lista vs Lista Ordenada)",
-			"Regresar"
-
-		};
-
-		addIndexToOptions(options);
-		mostrarMenu(options);
-		int opcion;
-		validarEntradaInt(opcion);
-		if (opcion == -1) continue;
-
-		switch (opcion) {
-		case 0:
-			//MedicionRendimiento();
-			break;
 		case 1:
 			std::cout << "Regresando al menu principal..." << std::endl;
 			salir = true;
@@ -240,8 +232,7 @@ void menuVisualizar()
 		std::vector<std::string> options ={
 			"Visualizar Arboles. (.dot)",
 			"AVL: Listar por nombre. in-order",
-			"Regresar"
-
+			"Regresar",
 		};
 
 		addIndexToOptions(options);
@@ -252,13 +243,11 @@ void menuVisualizar()
 
 		switch (opcion) {
 		case 0:
-			generarDot(arbolAVL->getRaiz());
+			generarDotAVL(arbolAVL->getRaiz());
+			generarDotBtree(arbolB->getRaiz());
 			break;
 		case 1:
 			arbolAVL->listarInorder(arbolAVL->getRaiz());
-			//DEBUG: listar productos
-			listaDesordenada->listarProductos();
-			listaOrdenada->listarProductos();
 			break;
 		case 2:
 			std::cout << "Regresando al menu principal..." << std::endl;
@@ -283,7 +272,6 @@ void menuPrincipal() {
 			"Buscar en estructuras",
 			"Eliminar en estructuras",
 			"Visualizar estructuras",
-			"Medicion de rendimiento",
 			"Salir"
 		};
 
@@ -296,6 +284,7 @@ void menuPrincipal() {
 		switch (opcion) {
 		case 0:
 			products = csvReader();
+			if (products.empty()) break;
 			loader(products);
 			if (!loggerGlob->isEmptyLog())
 			{
@@ -307,7 +296,7 @@ void menuPrincipal() {
 				<< std::endl;
 				loggerGlob->saveLogToFile("errores.log");
 			}
-			std::cout << "Carga completada. \nSe cargaron " << listaOrdenada->getSize(listaOrdenada->getCabeza()) << " productos." << std::endl;
+			std::cout << "Carga completada. \nSe cargaron " << listaOrdenada->getSize(listaOrdenada->getCabeza()) << " productos exitosamente." << std::endl;
 
 			break;
 		case 1:
@@ -323,9 +312,6 @@ void menuPrincipal() {
 			menuVisualizar();
 			break;
 		case 5:
-			menuMedicion();
-			break;
-		case 6:
 			std::cout << "Saliendo de la aplicación" << std::endl;
 			salir = true;
 			break;

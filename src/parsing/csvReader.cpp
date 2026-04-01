@@ -12,53 +12,7 @@
 
 #include "globals.h"
 #include "./logger/logger.h"
-
-//----------------------- Helper
-
-std::string trim (std::string& strTrim)
-{
-    std::string enBlanco = " \n\r\t\f\v";
-    size_t posPrimerChar = strTrim.find_first_not_of(enBlanco);
-    if (std::string::npos == posPrimerChar)
-    {
-        return "";
-    }
-    size_t posLastChar = strTrim.find_last_not_of(enBlanco);
-    return strTrim.substr(posPrimerChar, (posLastChar - posPrimerChar + 1));
-}
-
-bool inputIsDouble (std::string str)
-{
-    if (str.empty()) return false;
-    try {
-        std::size_t pos;
-        std::stod(str, &pos);
-        return pos == str.length();
-    } catch (const std::invalid_argument& e)
-    {
-        return false;
-    } catch (const std::out_of_range& e)
-    {
-        return false;
-    }
-}
-
-bool inputIsInt (std::string str)
-{
-    if (str.empty()) return false;
-    try
-    {
-        std::size_t pos;
-        std::stoi(str, &pos);
-        return pos == str.length();
-    } catch (const std::invalid_argument& e)
-    {
-        return false;
-    } catch (const std::out_of_range& e)
-    {
-        return false;
-    }
-}
+#include "../helperMethods/helperMethods.h"
 
 // -------------------------- Parseo de contenido
 
@@ -98,16 +52,22 @@ std::vector<std::string> splitCSVLine(const std::string& line)
 
 std::vector<Product> parseCSV(std::string& content)
 {
-    std::cout << "Parseando CSV... \n";
+    std::cout << "Parseando CSV... " << std::endl;
 
     std::vector<Product> products;
     std::istringstream stream(content);
     std::string line;
 
     std::getline(stream, line); // skip header row
+    if (line.empty())
+    {
+        std::cout << "El archivo esta vacio" << std::endl;
+    }
 
+    int lineCont = 1;
     while (std::getline(stream, line))
     {
+        lineCont++;
         // strip Windows-style \r if present
         if (!line.empty() && line.back() == '\r')
             line.pop_back();
@@ -118,17 +78,22 @@ std::vector<Product> parseCSV(std::string& content)
 
         if (fields.size() != 7)  // Skip si no son 7 lineas
         {
-            loggerGlob->logBadLine(line);
+            loggerGlob->logBadLine(line, lineCont);
+            continue;
+        }
+        if (!inputIsDate(fields[3])) // Si no es fecha
+        {
+            loggerGlob->logEvent("Fecha de caducidad no valida en linea " + std::to_string(lineCont) + " : " + line);
             continue;
         }
         if (!inputIsDouble(fields[5])) // Si no es double
         {
-            loggerGlob->logEvent("Precio no valido en linea: " + line);
+            loggerGlob->logEvent("Precio no valido en linea " + std::to_string(lineCont) + " : " + line);
             continue;
         }
         if (!inputIsInt(fields[6])) // Si no es int
         {
-            loggerGlob->logEvent("Stock no valido en linea: " + line);
+            loggerGlob->logEvent("Stock no valido en linea " + std::to_string(lineCont) + " : " + line);
             continue;
         }
 
@@ -177,6 +142,11 @@ std::vector<Product> csvReader()
     if (path.empty())
     {
         std::cout << "La dirección del archivo no puede estar vacía." << std::endl;
+        return {};
+    }
+    if (!std::filesystem::exists(path))
+    {
+        std::cout << "La ruta: " << path << " no existe" << std::endl;
         return {};
     }
     if (path.find(".csv") == std::string::npos)
