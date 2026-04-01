@@ -35,8 +35,6 @@ set(SOURCES
         src/tads/NodoB.h
         src/tads/ArbolB.cpp
         src/tads/ArbolB.h
-        examples/Btree.h
-        examples/Btree.cpp
 )
 
 # Graphviz
